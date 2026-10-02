@@ -152,6 +152,9 @@ The author of a pull request is responsible for understanding every line of code
 | Sabrina Chen  | sab-chen2  |
 | Haider Tauqir | Haidert368 |
 | Joseph Tesoro | Joe-C137   |
+| Krystian Gawecki  | Kry12345 |
+| Srei Leak Theap | Meyyun |
+|Andre Miller | andredmiller12   |
 
 ## Communication and Workflow
 
