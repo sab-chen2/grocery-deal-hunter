@@ -1,0 +1,191 @@
+// use prisma-8
+
+model User {
+  userId       Int              @id @default(autoincrement())
+  email        String           @unique
+  passwordHash String
+  createdAt    TimestamptzString @default(now())
+  updatedAt    temporal.updatedAtString()
+
+  locations      UserLocation[]
+  sessions       Session[]
+  groceryLists   GroceryList[]
+  favoriteLists  FavoriteList[]
+  followedStores FollowedStore[]
+  followedItems  FollowedItem[]
+}
+
+model UserLocation {
+  locationId    Int              @id @default(autoincrement())
+  userId        Int
+  addressLine1  String
+  addressLine2  String?
+  city          String
+  state         String
+  zipCode       String
+  country       String
+  latitude      Float?
+  longitude     Float?
+  isDefault     Boolean          @default(false)
+  createdAt     TimestamptzString @default(now())
+  updatedAt     temporal.updatedAtString()
+
+  user     User      @relation(fields: [userId], references: [userId])
+  sessions Session[]
+}
+
+model Session {
+  sessionId Int              @id @default(autoincrement())
+  userId    Int?
+  locationId Int?
+  createdAt TimestamptzString @default(now())
+  expiresAt TimestamptzString
+
+  user     User?         @relation(fields: [userId], references: [userId])
+  location UserLocation? @relation(fields: [locationId], references: [locationId])
+}
+
+model Store {
+  storeId     Int              @id @default(autoincrement())
+  name        String
+  websiteUrl  String?
+  createdAt   TimestamptzString @default(now())
+
+  locations      StoreLocation[]
+  followedStores FollowedStore[]
+}
+
+model StoreLocation {
+  storeLocationId Int              @id @default(autoincrement())
+  storeId         Int
+  addressLine1    String
+  addressLine2    String?
+  city            String
+  state           String
+  zipCode         String
+  country         String
+  latitude        Float?
+  longitude       Float?
+  createdAt       TimestamptzString @default(now())
+
+  store   Store  @relation(fields: [storeId], references: [storeId])
+  prices  Price[]
+  deals   Deal[]
+}
+
+model Product {
+  productId  Int              @id @default(autoincrement())
+  brand      String
+  name       String
+  size       String?
+  unit       String
+  category   String
+  upc        String?
+  createdAt  TimestamptzString @default(now())
+  updatedAt  temporal.updatedAtString()
+
+  matches       ProductMatch[]
+  prices        Price[]
+  deals         Deal[]
+  followedItems FollowedItem[]
+}
+
+model GroceryList {
+  listId     Int              @id @default(autoincrement())
+  userId     Int
+  name       String
+  createdAt  TimestamptzString @default(now())
+  updatedAt  temporal.updatedAtString()
+
+  user          User           @relation(fields: [userId], references: [userId])
+  items         GroceryListItem[]
+  favoriteLists FavoriteList[]
+}
+
+model GroceryListItem {
+  listItemId Int              @id @default(autoincrement())
+  listId     Int
+  searchTerm String
+  quantity   Int
+  createdAt  TimestamptzString @default(now())
+
+  list    GroceryList    @relation(fields: [listId], references: [listId])
+  matches ProductMatch[]
+}
+
+model ProductMatch {
+  listItemId     Int
+  productId      Int
+  matchConfidence Float
+
+  listItem GroceryListItem @relation(fields: [listItemId], references: [listItemId])
+  product  Product         @relation(fields: [productId], references: [productId])
+
+  @@id([listItemId, productId])
+}
+
+model Price {
+  priceId         Int              @id @default(autoincrement())
+  productId       Int
+  storeLocationId Int
+  regularPrice    Decimal?
+  salePrice       Decimal?
+  unitPrice       Decimal?
+  observedAt      TimestamptzString
+  validFrom       TimestamptzString?
+  validUntil      TimestamptzString?
+  source          String?
+
+  product       Product       @relation(fields: [productId], references: [productId])
+  storeLocation StoreLocation @relation(fields: [storeLocationId], references: [storeLocationId])
+}
+
+model Deal {
+  dealId          Int              @id @default(autoincrement())
+  productId       Int
+  storeLocationId Int
+  dealType       String
+  discountAmount Decimal?
+  discountPercent Decimal?
+  couponRequired Boolean          @default(false)
+  couponCode     String?
+  validFrom      TimestamptzString?
+  validUntil     TimestamptzString?
+  source         String?
+
+  product       Product       @relation(fields: [productId], references: [productId])
+  storeLocation StoreLocation @relation(fields: [storeLocationId], references: [storeLocationId])
+}
+
+model FavoriteList {
+  userId    Int
+  listId    Int
+  createdAt TimestamptzString @default(now())
+
+  user User        @relation(fields: [userId], references: [userId])
+  list GroceryList @relation(fields: [listId], references: [listId])
+
+  @@id([userId, listId])
+}
+
+model FollowedStore {
+  userId  Int
+  storeId Int
+  createdAt TimestamptzString @default(now())
+
+  user  User  @relation(fields: [userId], references: [userId])
+  store Store @relation(fields: [storeId], references: [storeId])
+
+  @@id([userId, storeId])
+}
+
+model FollowedItem {
+  userId    Int
+  productId Int
+  createdAt TimestamptzString @default(now())
+
+  user    User    @relation(fields: [userId], references: [userId])
+  product Product @relation(fields: [productId], references: [productId])
+
+  @@id([userId, productId])
+}
