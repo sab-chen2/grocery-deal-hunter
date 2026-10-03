@@ -1,9 +1,16 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <div className="flex flex-1 flex-col bg-background font-sans text-foreground">
       <header className="border-b border-foreground/10 px-6 py-5">
-        <div className="mx-auto max-w-5xl text-xl font-bold">
-          Grocery Deal Hunter
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4">
+          <span className="text-xl font-bold">Grocery Deal Hunter</span>
+          <nav aria-label="Account" className="flex items-center gap-5 text-sm font-medium">
+            <Link href="/shoppinglist">My lists</Link>
+            <Link href="/auth/login">Log in</Link>
+            <Link href="/auth/signup" className="rounded-lg bg-emerald-700 px-4 py-2 text-white">Sign up</Link>
+          </nav>
         </div>
       </header>
 

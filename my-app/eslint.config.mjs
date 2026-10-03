@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Prisma-generated declarations are validated by TypeScript, not hand-edited.
+    "src/prisma/contract.d.ts",
+    "migrations/snapshots/**/contract.d.ts",
   ]),
 ]);
 

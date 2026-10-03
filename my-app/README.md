@@ -8,7 +8,7 @@ You do not need to download Next.js separately or install it globally. This repo
 
 ### 1. Install the tools
 
-- Install the **LTS version of [Node.js](https://nodejs.org/)**. It includes npm, the package manager used here. Next.js requires Node.js 20.9 or newer; see the [official requirements](https://nextjs.org/docs/app/getting-started/installation).
+- Install **Node.js 22 or newer** from [nodejs.org](https://nodejs.org/). Supabase's JavaScript packages require Node.js 22+, and Node.js includes npm, the package manager used here.
 - Install [Git](https://git-scm.com/downloads) to clone the repository and collaborate.
 - Use a code editor such as [Visual Studio Code](https://code.visualstudio.com/).
 
@@ -55,6 +55,8 @@ Keep the terminal running while working. Saved code changes appear in the browse
 
 ## Working on the project
 
+See the [API reference and endpoint plan](docs/API.md) for grocery endpoint proposals and the [authentication setup](app/auth/auth.md) for login/signup, environment variables, and Supabase email configuration.
+
 The next time you work on the app, open a terminal in `my-app` and run `npm run dev`.
 
 ```text
@@ -63,8 +65,15 @@ my-app/
 |   |-- page.tsx                # Homepage: /
 |   |-- layout.tsx              # Shared layout for pages
 |   |-- globals.css             # Global styles
+|   |-- auth/                    # Login, signup, confirmation, and actions
 |   `-- shoppinglist/
 |       `-- page.tsx            # Shopping list route: /shoppinglist
+|-- src/
+|   |-- lib/auth/                # Session verification and Prisma profile linking
+|   |-- lib/supabase/            # Browser/server clients and session refresh
+|   `-- prisma/                  # Database contract and client
+|-- migrations/                 # Versioned Prisma database changes
+|-- proxy.ts                    # Supabase session refresh entry point
 |-- public/                    # Static files, such as images
 |-- package.json               # Dependencies and commands
 |-- package-lock.json          # Locked dependency versions
@@ -101,3 +110,5 @@ Run these from `my-app`:
 - [Next.js documentation](https://nextjs.org/docs)
 - [TypeScript handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
 - [React documentation](https://react.dev/learn)
+- [Authentication setup](app/auth/auth.md)
+- [Grocery API plan](docs/API.md)
