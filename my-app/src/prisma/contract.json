@@ -1382,8 +1382,8 @@
                   "kind": "scalar"
                 }
               },
-              "passwordHash": {
-                "nullable": false,
+              "supabaseAuthId": {
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -1504,8 +1504,8 @@
                 "email": {
                   "column": "email"
                 },
-                "passwordHash": {
-                  "column": "passwordHash"
+                "supabaseAuthId": {
+                  "column": "supabaseAuthId"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -2724,10 +2724,10 @@
                   "nativeType": "text",
                   "nullable": false
                 },
-                "passwordHash": {
+                "supabaseAuthId": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
-                  "nullable": false
+                  "nullable": true
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -2755,6 +2755,11 @@
                 {
                   "columns": [
                     "email"
+                  ]
+                },
+                {
+                  "columns": [
+                    "supabaseAuthId"
                   ]
                 }
               ]
@@ -2880,7 +2885,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "b1292893185c47769cf9f78657f38f2f9c0bcc7084f99c084a0ab31704caf1e7"
+    "storageHash": "d55f76b5f9da3301a10691ec67cc3289d3e6e7dbac282e5fcd7896bd9570df8c"
   },
   "execution": {
     "executionHash": "4ee268f5c0e958160548c28a6033a1d573d1bc5700d040b00931ca418f9a377d",

@@ -3,7 +3,8 @@
 model User {
   userId       Int              @id @default(autoincrement())
   email        String           @unique
-  passwordHash String
+  // Nullable during migration: existing users must be linked to verified Auth accounts.
+  supabaseAuthId String?         @unique
   createdAt    TimestamptzString @default(now())
   updatedAt    temporal.updatedAtString()
 
