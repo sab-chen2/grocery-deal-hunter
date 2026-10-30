@@ -1,5 +1,6 @@
-export default function ShoppingListPage() {
-  const title: string = "My Shopping List";
+import Link from 'next/link';
+import ShoppingListPanel from '../components/shopping-list-panel';
 
-  return <h1>{title}</h1>;
+export default function ShoppingListPage() {
+  return <main className="shopping-list-page"><Link href="/" className="back-to-map">← Back to map &amp; stores</Link><ShoppingListPanel /></main>;
 }
