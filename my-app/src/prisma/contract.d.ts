@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'d55f76b5f9da3301a10691ec67cc3289d3e6e7dbac282e5fcd7896bd9570df8c'>;
+  StorageHashBase<'cf75a6bf3c2d15999f690895f69d894b43e15d3a56c998bb09f417120352b01f'>;
 export type ExecutionHash =
   ExecutionHashBase<'4ee268f5c0e958160548c28a6033a1d573d1bc5700d040b00931ca418f9a377d'>;
 export type ProfileHash =
@@ -325,6 +325,7 @@ export type FieldOutputTypes = {
       readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly locationId: CodecTypes['pg/int4@1']['output'] | null;
       readonly sessionId: CodecTypes['pg/int4@1']['output'];
+      readonly tokenHash: CodecTypes['pg/text@1']['output'] | null;
       readonly userId: CodecTypes['pg/int4@1']['output'] | null;
     };
     readonly Store: {
@@ -349,6 +350,7 @@ export type FieldOutputTypes = {
     readonly User: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly email: CodecTypes['pg/text@1']['output'];
+      readonly passwordHash: CodecTypes['pg/text@1']['output'] | null;
       readonly supabaseAuthId: CodecTypes['pg/text@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly userId: CodecTypes['pg/int4@1']['output'];
@@ -447,6 +449,7 @@ export type FieldInputTypes = {
       readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly locationId: CodecTypes['pg/int4@1']['input'] | null;
       readonly sessionId: CodecTypes['pg/int4@1']['input'];
+      readonly tokenHash: CodecTypes['pg/text@1']['input'] | null;
       readonly userId: CodecTypes['pg/int4@1']['input'] | null;
     };
     readonly Store: {
@@ -471,6 +474,7 @@ export type FieldInputTypes = {
     readonly User: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly email: CodecTypes['pg/text@1']['input'];
+      readonly passwordHash: CodecTypes['pg/text@1']['input'] | null;
       readonly supabaseAuthId: CodecTypes['pg/text@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly userId: CodecTypes['pg/int4@1']['input'];
@@ -569,6 +573,7 @@ export type StorageColumnTypes = {
       readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly locationId: CodecTypes['pg/int4@1']['output'] | null;
       readonly sessionId: CodecTypes['pg/int4@1']['output'];
+      readonly tokenHash: CodecTypes['pg/text@1']['output'] | null;
       readonly userId: CodecTypes['pg/int4@1']['output'] | null;
     };
     readonly Store: {
@@ -593,6 +598,7 @@ export type StorageColumnTypes = {
     readonly User: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly email: CodecTypes['pg/text@1']['output'];
+      readonly passwordHash: CodecTypes['pg/text@1']['output'] | null;
       readonly supabaseAuthId: CodecTypes['pg/text@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly userId: CodecTypes['pg/int4@1']['output'];
@@ -691,6 +697,7 @@ export type StorageColumnInputTypes = {
       readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly locationId: CodecTypes['pg/int4@1']['input'] | null;
       readonly sessionId: CodecTypes['pg/int4@1']['input'];
+      readonly tokenHash: CodecTypes['pg/text@1']['input'] | null;
       readonly userId: CodecTypes['pg/int4@1']['input'] | null;
     };
     readonly Store: {
@@ -715,6 +722,7 @@ export type StorageColumnInputTypes = {
     readonly User: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly email: CodecTypes['pg/text@1']['input'];
+      readonly passwordHash: CodecTypes['pg/text@1']['input'] | null;
       readonly supabaseAuthId: CodecTypes['pg/text@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly userId: CodecTypes['pg/int4@1']['input'];
@@ -843,6 +851,7 @@ export namespace Models {
     expiresAt: CodecTypes['pg/timestamptz-string@1']['output'];
     locationId: CodecTypes['pg/int4@1']['output'] | null;
     sessionId: CodecTypes['pg/int4@1']['output'];
+    tokenHash: CodecTypes['pg/text@1']['output'] | null;
     userId: CodecTypes['pg/int4@1']['output'] | null;
     location: public_UserLocation | null;
     user: public_User | null;
@@ -877,6 +886,7 @@ export namespace Models {
   export type public_User = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     email: CodecTypes['pg/text@1']['output'];
+    passwordHash: CodecTypes['pg/text@1']['output'] | null;
     supabaseAuthId: CodecTypes['pg/text@1']['output'] | null;
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     userId: CodecTypes['pg/int4@1']['output'];
@@ -1608,6 +1618,11 @@ type ContractBase = Omit<
                     readonly expression: 'autoincrement()';
                   };
                 };
+                readonly tokenHash: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
                 readonly userId: {
                   readonly nativeType: 'int4';
                   readonly codecId: 'pg/int4@1';
@@ -1615,7 +1630,7 @@ type ContractBase = Omit<
                 };
               };
               primaryKey: { readonly columns: readonly ['sessionId'] };
-              uniques: readonly [];
+              uniques: readonly [{ readonly columns: readonly ['tokenHash'] }];
               indexes: readonly [
                 {
                   readonly name: 'Session_locationId_idx_7aae3038';
@@ -1790,6 +1805,11 @@ type ContractBase = Omit<
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
+                };
+                readonly passwordHash: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
                 };
                 readonly supabaseAuthId: {
                   readonly nativeType: 'text';
@@ -2636,6 +2656,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
+              readonly tokenHash: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly userId: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
@@ -2672,6 +2696,7 @@ type ContractBase = Omit<
                 readonly expiresAt: { readonly column: 'expiresAt' };
                 readonly locationId: { readonly column: 'locationId' };
                 readonly sessionId: { readonly column: 'sessionId' };
+                readonly tokenHash: { readonly column: 'tokenHash' };
                 readonly userId: { readonly column: 'userId' };
               };
             };
@@ -2847,6 +2872,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly passwordHash: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly supabaseAuthId: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -2937,6 +2966,7 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly email: { readonly column: 'email' };
+                readonly passwordHash: { readonly column: 'passwordHash' };
                 readonly supabaseAuthId: { readonly column: 'supabaseAuthId' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
                 readonly userId: { readonly column: 'userId' };

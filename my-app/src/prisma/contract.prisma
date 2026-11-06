@@ -5,6 +5,7 @@ model User {
   email        String           @unique
   // Nullable during migration: existing users must be linked to verified Auth accounts.
   supabaseAuthId String?         @unique
+  passwordHash String?
   createdAt    TimestamptzString @default(now())
   updatedAt    temporal.updatedAtString()
 
@@ -39,6 +40,7 @@ model Session {
   sessionId Int              @id @default(autoincrement())
   userId    Int?
   locationId Int?
+  tokenHash String?  @unique
   createdAt TimestamptzString @default(now())
   expiresAt TimestamptzString
 
