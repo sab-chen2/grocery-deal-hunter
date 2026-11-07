@@ -1,0 +1,48 @@
+{
+  "storeId": "store-004",
+  "storeName": "Sunnyfield Foods",
+  "products": [
+    {
+      "productId": "chicken-breast",
+      "productName": "Boneless Chicken Breast",
+      "brand": "Sunnyfield Foods",
+      "price": 3.49,
+      "unit": "lb"
+    },
+    {
+      "productId": "sandwich-bread",
+      "productName": "Sliced Sandwich Bread",
+      "brand": "Sunnyfield Foods",
+      "price": 2.79,
+      "unit": "loaf"
+    },
+    {
+      "productId": "large-eggs",
+      "productName": "Large Eggs",
+      "brand": "Sunnyfield Foods",
+      "price": 3.59,
+      "unit": "dozen"
+    },
+    {
+      "productId": "strawberries",
+      "productName": "Strawberries",
+      "brand": "Meadow Patch Farms",
+      "price": 3.49,
+      "unit": "pint"
+    },
+    {
+      "productId": "iceberg-lettuce",
+      "productName": "Iceberg Lettuce",
+      "brand": null,
+      "price": 1.99,
+      "unit": "head"
+    },
+    {
+      "productId": "large-onion",
+      "productName": "Large Onion",
+      "brand": null,
+      "price": 0.89,
+      "unit": "each"
+    }
+  ]
+}
