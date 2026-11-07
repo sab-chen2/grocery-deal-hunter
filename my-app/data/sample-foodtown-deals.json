@@ -1,0 +1,58 @@
+{
+  "source": {
+    "store": "Foodtown",
+    "circularPage": 1,
+    "validFrom": "2026-10-30",
+    "validTo": "2026-11-05"
+  },
+  "deals": [
+    {
+      "productName": "Boneless Chicken Breasts",
+      "advertisedPrice": 1.99,
+      "priceUnit": "lb",
+      "requiresLoyaltyCard": true,
+      "requiresDigitalCoupon": true,
+      "minimumQuantity": 1
+    },
+    {
+      "productName": "Baby Back Ribs",
+      "advertisedPrice": 2.99,
+      "priceUnit": "lb",
+      "requiresLoyaltyCard": true,
+      "requiresDigitalCoupon": true,
+      "minimumQuantity": 1
+    },
+    {
+      "productName": "Fage Sour Cream",
+      "advertisedPrice": 0.99,
+      "priceUnit": "each",
+      "requiresLoyaltyCard": true,
+      "requiresDigitalCoupon": true,
+      "minimumQuantity": 1
+    },
+    {
+      "productName": "Doritos Tortilla Chips",
+      "advertisedPrice": 3.99,
+      "priceUnit": "each",
+      "requiresLoyaltyCard": false,
+      "requiresDigitalCoupon": false,
+      "minimumQuantity": 1
+    },
+    {
+      "productName": "Utz or Boulder Canyon Chips",
+      "advertisedPrice": 5.00,
+      "priceUnit": "2 items",
+      "requiresLoyaltyCard": false,
+      "requiresDigitalCoupon": false,
+      "minimumQuantity": 2
+    },
+    {
+      "productName": "Fanta Soda",
+      "advertisedPrice": 5.00,
+      "priceUnit": "3 items",
+      "requiresLoyaltyCard": true,
+      "requiresDigitalCoupon": false,
+      "minimumQuantity": 3
+    }
+  ]
+}
