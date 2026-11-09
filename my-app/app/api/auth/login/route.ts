@@ -7,11 +7,18 @@ import { checkRateLimit } from "@/src/lib/rate-limit/check-rate-limit";
 import { getClientIdentifier } from "@/src/lib/rate-limit/client-identifier";
 import { validateOrigin } from "@/src/lib/security/validate-origin";
 
+const NO_STORE_HEADERS = {
+  "Cache-Control": "no-store",
+};
+
 export async function POST(request: NextRequest) {
   if (!validateOrigin(request)) {
     return NextResponse.json(
       { error: "Forbidden origin" },
-      { status: 403 }
+      {
+        status: 403,
+        headers: NO_STORE_HEADERS,
+      }
     );
   }
 
@@ -22,7 +29,10 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json(
       { error: "Invalid JSON request body" },
-      { status: 400 }
+      {
+        status: 400,
+        headers: NO_STORE_HEADERS,
+      }
     );
   }
 
@@ -31,7 +41,10 @@ export async function POST(request: NextRequest) {
   if (!result.success) {
     return NextResponse.json(
       { error: "Invalid login data" },
-      { status: 400 }
+      {
+        status: 400,
+        headers: NO_STORE_HEADERS,
+      }
     );
   }
 
@@ -49,6 +62,7 @@ try {
       {
         status: 429,
         headers: {
+          ...NO_STORE_HEADERS,
           "Retry-After": String(rateLimit.retryAfterSeconds),
         },
       }
@@ -63,7 +77,10 @@ try {
   if (!user) {
     return NextResponse.json(
       { error: "Invalid email or password" },
-      { status: 401 }
+      {
+        status: 401,
+        headers: NO_STORE_HEADERS,
+      }
     );
   }
 
@@ -76,9 +93,7 @@ try {
       },
       {
         status: 200,
-        headers: {
-          "Cache-Control": "no-store",
-        },
+        headers: NO_STORE_HEADERS,
       }
     );
 
@@ -95,7 +110,10 @@ try {
     } catch {
       return NextResponse.json(
         { error: "Authentication failed" },
-        { status: 500 }
+        {
+          status: 500,
+          headers: NO_STORE_HEADERS,
+        }
       );
     }
 }

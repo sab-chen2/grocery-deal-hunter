@@ -52,6 +52,7 @@ describe("POST /api/auth/login", () => {
     const response = await POST(request);
 
     expect(response.status).toBe(429);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
     expect(response.headers.get("Retry-After")).toBe("120");
 
     expect(await response.json()).toEqual({
@@ -90,7 +91,7 @@ describe("POST /api/auth/login", () => {
     const response = await POST(request);
 
     expect(response.status).toBe(500);
-
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
     expect(await response.json()).toEqual({
       error: "Authentication failed",
     });
@@ -126,7 +127,7 @@ describe("POST /api/auth/login", () => {
     const response = await POST(request);
 
     expect(response.status).toBe(401);
-
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
     expect(await response.json()).toEqual({
       error: "Invalid email or password",
     });
@@ -186,9 +187,7 @@ describe("POST /api/auth/login", () => {
     const response = await POST(request);
 
     expect(response.status).toBe(200);
-
     expect(response.headers.get("Cache-Control")).toBe("no-store");
-
     expect(await response.json()).toEqual({
       message: "Login successful",
       user: mockUser,
@@ -237,7 +236,7 @@ describe("POST /api/auth/login", () => {
     const response = await POST(request);
 
     expect(response.status).toBe(403);
-
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
     expect(await response.json()).toEqual({
       error: "Forbidden origin",
     });
@@ -247,5 +246,62 @@ describe("POST /api/auth/login", () => {
     expect(createSession).not.toHaveBeenCalled();
 
     expect(response.headers.get("set-cookie")).toBeNull();
+  });
+
+  it("returns 400 for malformed JSON", async () => {
+    const request = new NextRequest(
+      "http://localhost:3000/api/auth/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:3000",
+        },
+        body: '{"email":',
+      }
+    );
+
+    const response = await POST(request);
+
+    expect(response.status).toBe(400);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+
+    expect(await response.json()).toEqual({
+      error: "Invalid JSON request body",
+    });
+
+    expect(checkRateLimit).not.toHaveBeenCalled();
+    expect(authenticateUser).not.toHaveBeenCalled();
+    expect(createSession).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 for invalid login data", async () => {
+    const request = new NextRequest(
+      "http://localhost:3000/api/auth/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:3000",
+        },
+        body: JSON.stringify({
+          email: "not-an-email",
+          password: "TestPassword123!",
+        }),
+      }
+    );
+
+    const response = await POST(request);
+
+    expect(response.status).toBe(400);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+
+    expect(await response.json()).toEqual({
+      error: "Invalid login data",
+    });
+
+    expect(checkRateLimit).not.toHaveBeenCalled();
+    expect(authenticateUser).not.toHaveBeenCalled();
+    expect(createSession).not.toHaveBeenCalled();
   });
 });
