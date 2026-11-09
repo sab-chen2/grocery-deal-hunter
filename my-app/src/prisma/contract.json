@@ -40,6 +40,10 @@
       "model": "ProductMatch",
       "namespace": "public"
     },
+    "RateLimit": {
+      "model": "RateLimit",
+      "namespace": "public"
+    },
     "Session": {
       "model": "Session",
       "namespace": "public"
@@ -1020,6 +1024,77 @@
               },
               "namespaceId": "public",
               "table": "ProductMatch"
+            }
+          },
+          "RateLimit": {
+            "fields": {
+              "attempts": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "expiresAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "keyHash": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "policy": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "rateLimitId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "windowStart": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "attempts": {
+                  "column": "attempts"
+                },
+                "expiresAt": {
+                  "column": "expiresAt"
+                },
+                "keyHash": {
+                  "column": "keyHash"
+                },
+                "policy": {
+                  "column": "policy"
+                },
+                "rateLimitId": {
+                  "column": "rateLimitId"
+                },
+                "windowStart": {
+                  "column": "windowStart"
+                }
+              },
+              "namespaceId": "public",
+              "table": "RateLimit"
             }
           },
           "Session": {
@@ -2492,6 +2567,63 @@
               },
               "uniques": []
             },
+            "RateLimit": {
+              "columns": {
+                "attempts": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 0
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "expiresAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "keyHash": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "policy": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "rateLimitId": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "windowStart": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "rateLimitId"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "keyHash",
+                    "policy"
+                  ]
+                }
+              ]
+            },
             "Session": {
               "columns": {
                 "createdAt": {
@@ -2921,7 +3053,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "cf75a6bf3c2d15999f690895f69d894b43e15d3a56c998bb09f417120352b01f"
+    "storageHash": "4fe9b8548d073314a03ce7fbd18e2a9fd788764e5b5c0f2baf864764b6d1bfd6"
   },
   "execution": {
     "executionHash": "4ee268f5c0e958160548c28a6033a1d573d1bc5700d040b00931ca418f9a377d",

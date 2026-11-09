@@ -3,6 +3,8 @@ import { createSession } from "@/src/lib/auth/create-session";
 import { NextRequest, NextResponse } from "next/server";
 import { loginSchema } from "@/src/lib/validation/login";
 import { authenticateUser } from "@/src/lib/auth/authenticate-user";
+import { checkRateLimit } from "@/src/lib/rate-limit/check-rate-limit";
+import { getClientIdentifier } from "@/src/lib/rate-limit/client-identifier";
 
 export async function POST(request: NextRequest) {
   let body: unknown;
@@ -26,6 +28,25 @@ export async function POST(request: NextRequest) {
   }
 
 try {
+  const clientIdentifier = getClientIdentifier(request);
+
+  const rateLimit = await checkRateLimit(
+    "login",
+    clientIdentifier
+  );
+
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: "Too many login attempts. Please try again later." },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(rateLimit.retryAfterSeconds),
+        },
+      }
+    );
+  }
+
   const user = await authenticateUser(
     result.data.email,
     result.data.password

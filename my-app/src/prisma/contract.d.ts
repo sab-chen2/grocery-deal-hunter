@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'cf75a6bf3c2d15999f690895f69d894b43e15d3a56c998bb09f417120352b01f'>;
+  StorageHashBase<'4fe9b8548d073314a03ce7fbd18e2a9fd788764e5b5c0f2baf864764b6d1bfd6'>;
 export type ExecutionHash =
   ExecutionHashBase<'4ee268f5c0e958160548c28a6033a1d573d1bc5700d040b00931ca418f9a377d'>;
 export type ProfileHash =
@@ -320,6 +320,14 @@ export type FieldOutputTypes = {
       readonly matchConfidence: CodecTypes['pg/float8@1']['output'];
       readonly productId: CodecTypes['pg/int4@1']['output'];
     };
+    readonly RateLimit: {
+      readonly attempts: CodecTypes['pg/int4@1']['output'];
+      readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly keyHash: CodecTypes['pg/text@1']['output'];
+      readonly policy: CodecTypes['pg/text@1']['output'];
+      readonly rateLimitId: CodecTypes['pg/int4@1']['output'];
+      readonly windowStart: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
     readonly Session: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -443,6 +451,14 @@ export type FieldInputTypes = {
       readonly listItemId: CodecTypes['pg/int4@1']['input'];
       readonly matchConfidence: CodecTypes['pg/float8@1']['input'];
       readonly productId: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly RateLimit: {
+      readonly attempts: CodecTypes['pg/int4@1']['input'];
+      readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly keyHash: CodecTypes['pg/text@1']['input'];
+      readonly policy: CodecTypes['pg/text@1']['input'];
+      readonly rateLimitId: CodecTypes['pg/int4@1']['input'];
+      readonly windowStart: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Session: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -568,6 +584,14 @@ export type StorageColumnTypes = {
       readonly matchConfidence: CodecTypes['pg/float8@1']['output'];
       readonly productId: CodecTypes['pg/int4@1']['output'];
     };
+    readonly RateLimit: {
+      readonly attempts: CodecTypes['pg/int4@1']['output'];
+      readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly keyHash: CodecTypes['pg/text@1']['output'];
+      readonly policy: CodecTypes['pg/text@1']['output'];
+      readonly rateLimitId: CodecTypes['pg/int4@1']['output'];
+      readonly windowStart: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
     readonly Session: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -691,6 +715,14 @@ export type StorageColumnInputTypes = {
       readonly listItemId: CodecTypes['pg/int4@1']['input'];
       readonly matchConfidence: CodecTypes['pg/float8@1']['input'];
       readonly productId: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly RateLimit: {
+      readonly attempts: CodecTypes['pg/int4@1']['input'];
+      readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly keyHash: CodecTypes['pg/text@1']['input'];
+      readonly policy: CodecTypes['pg/text@1']['input'];
+      readonly rateLimitId: CodecTypes['pg/int4@1']['input'];
+      readonly windowStart: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Session: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -846,6 +878,15 @@ export namespace Models {
     product: public_Product;
     readonly [RelationKeys]?: 'listItem' | 'product';
   };
+  export type public_RateLimit = {
+    attempts: CodecTypes['pg/int4@1']['output'];
+    expiresAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    keyHash: CodecTypes['pg/text@1']['output'];
+    policy: CodecTypes['pg/text@1']['output'];
+    rateLimitId: CodecTypes['pg/int4@1']['output'];
+    windowStart: CodecTypes['pg/timestamptz-string@1']['output'];
+    readonly [RelationKeys]?: never;
+  };
   export type public_Session = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     expiresAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -935,6 +976,7 @@ export declare const models: {
     Price: Models.public_Price;
     Product: Models.public_Product;
     ProductMatch: Models.public_ProductMatch;
+    RateLimit: Models.public_RateLimit;
     Session: Models.public_Session;
     Store: Models.public_Store;
     StoreLocation: Models.public_StoreLocation;
@@ -1591,6 +1633,52 @@ type ContractBase = Omit<
                 },
               ];
             };
+            readonly RateLimit: {
+              columns: {
+                readonly attempts: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 0>;
+                  };
+                };
+                readonly expiresAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+                readonly keyHash: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly policy: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly rateLimitId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly windowStart: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['rateLimitId'] };
+              uniques: readonly [{ readonly columns: readonly ['keyHash', 'policy'] }];
+              indexes: readonly [];
+              foreignKeys: readonly [];
+            };
             readonly Session: {
               columns: {
                 readonly createdAt: {
@@ -1979,6 +2067,7 @@ type ContractBase = Omit<
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'ProductMatch';
     };
+    readonly RateLimit: { readonly namespace: 'public' & NamespaceId; readonly model: 'RateLimit' };
     readonly Session: { readonly namespace: 'public' & NamespaceId; readonly model: 'Session' };
     readonly Store: { readonly namespace: 'public' & NamespaceId; readonly model: 'Store' };
     readonly StoreLocation: {
@@ -2629,6 +2718,53 @@ type ContractBase = Omit<
                 readonly listItemId: { readonly column: 'listItemId' };
                 readonly matchConfidence: { readonly column: 'matchConfidence' };
                 readonly productId: { readonly column: 'productId' };
+              };
+            };
+          };
+          readonly RateLimit: {
+            readonly fields: {
+              readonly attempts: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly expiresAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly keyHash: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly policy: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly rateLimitId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly windowStart: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: Record<string, never>;
+            readonly storage: {
+              readonly table: 'RateLimit';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly attempts: { readonly column: 'attempts' };
+                readonly expiresAt: { readonly column: 'expiresAt' };
+                readonly keyHash: { readonly column: 'keyHash' };
+                readonly policy: { readonly column: 'policy' };
+                readonly rateLimitId: { readonly column: 'rateLimitId' };
+                readonly windowStart: { readonly column: 'windowStart' };
               };
             };
           };

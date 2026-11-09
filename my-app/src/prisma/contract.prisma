@@ -192,3 +192,14 @@ model FollowedItem {
 
   @@id([userId, productId])
 }
+
+model RateLimit {
+  rateLimitId Int              @id @default(autoincrement())
+  keyHash     String
+  policy      String
+  attempts    Int              @default(0)
+  windowStart TimestamptzString
+  expiresAt   TimestamptzString
+
+  @@unique([keyHash, policy])
+}
