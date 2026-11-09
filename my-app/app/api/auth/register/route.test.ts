@@ -131,11 +131,12 @@ describe("POST /api/auth/register", () => {
 
     const response = await POST(request);
 
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(200);
     expect(response.headers.get("Cache-Control")).toBe("no-store");
+
     expect(await response.json()).toEqual({
-      message: "User registered successfully",
-      user: mockUser,
+      message:
+        "Registration request processed. If eligible, an account may have been created.",
     });
 
     expect(checkRateLimit).toHaveBeenCalledWith(
@@ -240,7 +241,7 @@ describe("POST /api/auth/register", () => {
     expect(createUser).not.toHaveBeenCalled();
   });
 
-  it("returns 409 when the email address is already registered", async () => {
+  it("returns a generic response when the email address is already registered", async () => {
     vi.mocked(checkRateLimit).mockResolvedValueOnce({
       allowed: true,
       remaining: 4,
@@ -272,11 +273,12 @@ describe("POST /api/auth/register", () => {
 
     const response = await POST(request);
 
-    expect(response.status).toBe(409);
+    expect(response.status).toBe(200);
     expect(response.headers.get("Cache-Control")).toBe("no-store");
 
     expect(await response.json()).toEqual({
-      error: "Email address is already registered",
+      message:
+        "Registration request processed. If eligible, an account may have been created.",
     });
 
     expect(checkRateLimit).toHaveBeenCalledWith(
@@ -290,5 +292,55 @@ describe("POST /api/auth/register", () => {
       "test@example.com",
       "hashed-password"
     );
+  });
+
+  it("does not reveal whether an email address is already registered", async () => {
+    vi.mocked(checkRateLimit).mockResolvedValue({
+      allowed: true,
+      remaining: 4,
+      retryAfterSeconds: 0,
+    });
+
+    vi.mocked(hashPassword).mockResolvedValue("hashed-password");
+
+    vi.mocked(createUser)
+      .mockResolvedValueOnce({
+        userId: 123,
+        email: "test@example.com",
+      })
+      .mockRejectedValueOnce({
+        kind: "sql_query",
+        sqlState: "23505",
+        constraint: "User_email_key",
+      });
+
+    const makeRequest = () =>
+      new NextRequest("http://localhost:3000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:3000",
+        },
+        body: JSON.stringify({
+          email: "test@example.com",
+          password: "TestPassword123!",
+        }),
+      });
+
+    const successResponse = await POST(makeRequest());
+    const duplicateResponse = await POST(makeRequest());
+
+    expect(successResponse.status).toBe(200);
+    expect(duplicateResponse.status).toBe(successResponse.status);
+
+    expect(duplicateResponse.headers.get("Cache-Control")).toBe(
+      successResponse.headers.get("Cache-Control")
+    );
+
+    expect(await duplicateResponse.json()).toEqual(
+      await successResponse.json()
+    );
+
+    expect(createUser).toHaveBeenCalledTimes(2);
   });
 });

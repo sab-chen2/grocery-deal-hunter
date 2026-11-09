@@ -11,6 +11,11 @@ const NO_STORE_HEADERS = {
   "Cache-Control": "no-store",
 };
 
+const REGISTRATION_RESPONSE = {
+  message:
+    "Registration request processed. If eligible, an account may have been created.",
+};
+
 export async function POST(request: NextRequest) {
   if (!validateOrigin(request)) {
     return NextResponse.json(
@@ -76,23 +81,21 @@ export async function POST(request: NextRequest) {
 
     const passwordHash = await hashPassword(result.data.password);
 
-    const user = await createUser(result.data.email, passwordHash);
+    await createUser(result.data.email, passwordHash);
+
     return NextResponse.json(
+      REGISTRATION_RESPONSE,
       {
-        message: "User registered successfully",
-        user,
-      },
-      {
-        status: 201,
+        status: 200,
         headers: NO_STORE_HEADERS,
       }
     );
   } catch (error) {
     if (isDuplicateEmailError(error)) {
       return NextResponse.json(
-        { error: "Email address is already registered" },
+        REGISTRATION_RESPONSE,
         {
-          status: 409,
+          status: 200,
           headers: NO_STORE_HEADERS,
         }
       );
