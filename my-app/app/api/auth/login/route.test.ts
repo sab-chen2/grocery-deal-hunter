@@ -187,6 +187,8 @@ describe("POST /api/auth/login", () => {
 
     expect(response.status).toBe(200);
 
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+
     expect(await response.json()).toEqual({
       message: "Login successful",
       user: mockUser,
@@ -208,6 +210,12 @@ describe("POST /api/auth/login", () => {
     expect(setCookieHeader).toContain("HttpOnly");
     expect(setCookieHeader).toContain("SameSite=lax");
     expect(setCookieHeader).toContain("Path=/");
+
+    const cookieExpires = response.cookies.get("session")?.expires;
+    expect(cookieExpires).toBeDefined();
+    expect(new Date(cookieExpires!).getTime())
+      .toBe(new Date(expiresAt).getTime());
+
   });
 
   it("rejects cross-origin login requests before authentication", async () => {

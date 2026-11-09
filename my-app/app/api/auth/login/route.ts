@@ -74,7 +74,12 @@ try {
         message: "Login successful",
         user,
       },
-      { status: 200 }
+      {
+        status: 200,
+        headers: {
+          "Cache-Control": "no-store",
+        },
+      }
     );
 
     response.cookies.set("session", session.token, {
@@ -87,28 +92,11 @@ try {
 
     return response;
 
-//  return NextResponse.json(
-//    {
-//      message: "Credentials verified successfully",
-//      user,
-//    },
-//    { status: 200 }
-//  );
-
-} catch {
-  return NextResponse.json(
-    { error: "Authentication failed" },
-    { status: 500 }
-  );
-}
-
-//  return NextResponse.json(
-//    {
-//      message: "Login data is valid",
-//      email: result.data.email,
-//    },
-//    { status: 200 }
-//  );
-
+    } catch {
+      return NextResponse.json(
+        { error: "Authentication failed" },
+        { status: 500 }
+      );
+    }
 }
 
