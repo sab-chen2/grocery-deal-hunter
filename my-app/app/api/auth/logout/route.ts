@@ -1,8 +1,16 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { revokeSession } from "@/src/lib/auth/revoke-session";
+import { validateOrigin } from "@/src/lib/security/validate-origin";
 
 export async function POST(request: NextRequest) {
+  if (!validateOrigin(request)) {
+    return NextResponse.json(
+      { error: "Forbidden origin" },
+      { status: 403 }
+    );
+  }
+
   const token = request.cookies.get("session")?.value;
 
   try {

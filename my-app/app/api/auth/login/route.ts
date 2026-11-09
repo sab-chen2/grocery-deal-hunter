@@ -5,8 +5,16 @@ import { loginSchema } from "@/src/lib/validation/login";
 import { authenticateUser } from "@/src/lib/auth/authenticate-user";
 import { checkRateLimit } from "@/src/lib/rate-limit/check-rate-limit";
 import { getClientIdentifier } from "@/src/lib/rate-limit/client-identifier";
+import { validateOrigin } from "@/src/lib/security/validate-origin";
 
 export async function POST(request: NextRequest) {
+  if (!validateOrigin(request)) {
+    return NextResponse.json(
+      { error: "Forbidden origin" },
+      { status: 403 }
+    );
+  }
+
   let body: unknown;
 
   try {

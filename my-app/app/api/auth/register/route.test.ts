@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { beforeEach, describe, it, expect, vi } from "vitest";
 import { NextRequest } from "next/server";
 import { POST } from "./route";
 import { checkRateLimit } from "@/src/lib/rate-limit/check-rate-limit";
@@ -22,6 +22,11 @@ vi.mock("@/src/lib/auth/register-user", () => ({
 }));
 
 describe("POST /api/auth/register", () => {
+  beforeEach(() => {
+    vi.stubEnv("APP_ORIGIN", "http://localhost:3000");
+    vi.clearAllMocks();
+  });
+
   it("returns 429 without hashing a password when rate limited", async () => {
     vi.mocked(checkRateLimit).mockResolvedValueOnce({
       allowed: false,
@@ -35,6 +40,7 @@ describe("POST /api/auth/register", () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Origin: "http://localhost:3000",
         },
         body: JSON.stringify({
           email: "test@example.com",
@@ -70,6 +76,7 @@ describe("POST /api/auth/register", () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Origin: "http://localhost:3000",
         },
         body: JSON.stringify({
           email: "test@example.com",
@@ -111,6 +118,7 @@ describe("POST /api/auth/register", () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Origin: "http://localhost:3000",
         },
         body: JSON.stringify({
           email: "test@example.com",
@@ -140,4 +148,34 @@ describe("POST /api/auth/register", () => {
     );
   });
 
+  it("rejects cross-origin registration before creating a user", async () => {
+    const request = new NextRequest(
+      "http://localhost:3000/api/auth/register",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://attacker.example",
+        },
+        body: JSON.stringify({
+          email: "test@example.com",
+          password: "TestPassword123!",
+       }),
+      }
+    );
+
+    const response = await POST(request);
+
+    expect(response.status).toBe(403);
+
+    expect(await response.json()).toEqual({
+      error: "Forbidden origin",
+    });
+
+    expect(checkRateLimit).not.toHaveBeenCalled();
+    expect(hashPassword).not.toHaveBeenCalled();
+    expect(createUser).not.toHaveBeenCalled();
+
+    expect(response.headers.get("set-cookie")).toBeNull();
+  });
 });

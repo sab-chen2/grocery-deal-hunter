@@ -5,8 +5,16 @@ import { createUser } from "@/src/lib/auth/register-user";
 import { isDuplicateEmailError } from "@/src/lib/auth/errors";
 import { checkRateLimit } from "@/src/lib/rate-limit/check-rate-limit";
 import { getClientIdentifier } from "@/src/lib/rate-limit/client-identifier";
+import { validateOrigin } from "@/src/lib/security/validate-origin";
 
 export async function POST(request: NextRequest) {
+  if (!validateOrigin(request)) {
+    return NextResponse.json(
+      { error: "Forbidden origin" },
+      { status: 403 }
+    );
+  }
+
   let body: unknown;
 
   try {

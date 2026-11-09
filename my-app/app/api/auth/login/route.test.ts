@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { beforeEach, describe, it, expect, vi } from "vitest";
 import { NextRequest } from "next/server";
 import { POST } from "./route";
 import { checkRateLimit } from "@/src/lib/rate-limit/check-rate-limit";
@@ -22,6 +22,11 @@ vi.mock("@/src/lib/auth/create-session", () => ({
 }));
 
 describe("POST /api/auth/login", () => {
+  beforeEach(() => {
+    vi.stubEnv("APP_ORIGIN", "http://localhost:3000");
+    vi.clearAllMocks();
+  });
+
   it("returns 429 without authenticating when rate limited", async () => {
     vi.mocked(checkRateLimit).mockResolvedValueOnce({
       allowed: false,
@@ -35,6 +40,7 @@ describe("POST /api/auth/login", () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Origin: "http://localhost:3000",
         },
         body: JSON.stringify({
           email: "test@example.com",
@@ -72,6 +78,7 @@ describe("POST /api/auth/login", () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Origin: "http://localhost:3000",
         },
         body: JSON.stringify({
           email: "test@example.com",
@@ -107,6 +114,7 @@ describe("POST /api/auth/login", () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Origin: "http://localhost:3000",
         },
         body: JSON.stringify({
           email: "test@example.com",
@@ -166,6 +174,7 @@ describe("POST /api/auth/login", () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Origin: "http://localhost:3000",
         },
         body: JSON.stringify({
           email: "test@example.com",
@@ -199,5 +208,36 @@ describe("POST /api/auth/login", () => {
     expect(setCookieHeader).toContain("HttpOnly");
     expect(setCookieHeader).toContain("SameSite=lax");
     expect(setCookieHeader).toContain("Path=/");
+  });
+
+  it("rejects cross-origin login requests before authentication", async () => {
+    const request = new NextRequest(
+      "http://localhost:3000/api/auth/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://attacker.example",
+        },
+        body: JSON.stringify({
+          email: "test@example.com",
+          password: "TestPassword123!",
+        }),
+      }
+    );
+
+    const response = await POST(request);
+
+    expect(response.status).toBe(403);
+
+    expect(await response.json()).toEqual({
+      error: "Forbidden origin",
+    });
+
+    expect(checkRateLimit).not.toHaveBeenCalled();
+    expect(authenticateUser).not.toHaveBeenCalled();
+    expect(createSession).not.toHaveBeenCalled();
+
+    expect(response.headers.get("set-cookie")).toBeNull();
   });
 });
