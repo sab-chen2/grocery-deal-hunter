@@ -58,5 +58,53 @@ describe("revokeSession database integration", () => {
       }
     }
   });
+
+  it("handles deleting a nonexistent session record", async () => {
+    const nonexistentTokenHash = "0".repeat(64);
+
+    await expect(
+      db.orm.public.Session
+        .where({ tokenHash: nonexistentTokenHash })
+        .delete()
+    ).resolves.not.toThrow();
+  });
+
+  it("handles concurrent revocation of the same session", async () => {
+    const email = `test-${randomUUID()}@example.com`;
+    const passwordHash = await hashPassword("SecurePassword123!");
+
+    let userId: number | undefined;
+    let sessionId: number | undefined;
+
+    try {
+      const user = await createUser(email, passwordHash);
+      userId = user.userId;
+
+      const session = await createSession(userId);
+      sessionId = session.sessionId;
+
+      await expect(
+        Promise.all([
+          revokeSession(session.token),
+          revokeSession(session.token),
+          revokeSession(session.token),
+        ])
+      ).resolves.toEqual([undefined, undefined, undefined]);
+
+      expect(await findSessionByToken(session.token)).toBeNull();
+    } finally {
+      if (sessionId !== undefined) {
+        await db.orm.public.Session
+          .where({ sessionId })
+          .delete();
+      }
+
+      if (userId !== undefined) {
+        await db.orm.public.User
+          .where({ userId })
+          .delete();
+      }
+    }
+  });
 });
 

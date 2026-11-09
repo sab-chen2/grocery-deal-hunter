@@ -7,17 +7,8 @@ export async function revokeSession(
 ): Promise<void> {
   const tokenHash = hashSessionToken(token);
 
-  const session = await db.orm.public.Session
-    .select("sessionId")
-    .where({ tokenHash })
-    .first();
-
-  if (!session) {
-    return;
-  }
-
   await db.orm.public.Session
-    .where({ sessionId: session.sessionId })
+    .where({ tokenHash })
     .delete();
 }
 
