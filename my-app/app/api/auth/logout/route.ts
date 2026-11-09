@@ -3,11 +3,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { revokeSession } from "@/src/lib/auth/revoke-session";
 import { validateOrigin } from "@/src/lib/security/validate-origin";
 
+const NO_STORE_HEADERS = {
+  "Cache-Control": "no-store",
+};
+
 export async function POST(request: NextRequest) {
   if (!validateOrigin(request)) {
     return NextResponse.json(
       { error: "Forbidden origin" },
-      { status: 403 }
+      {
+        status: 403,
+        headers: NO_STORE_HEADERS,
+      }
     );
   }
 
@@ -22,9 +29,7 @@ export async function POST(request: NextRequest) {
       { message: "Logout successful" },
       {
         status: 200,
-        headers: {
-          "Cache-Control": "no-store",
-        },
+        headers: NO_STORE_HEADERS,
       }
     );
 
@@ -40,7 +45,10 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json(
       { error: "Logout failed" },
-      { status: 500 }
+      {
+        status: 500,
+        headers: NO_STORE_HEADERS,
+      }
     );
   }
 }

@@ -28,7 +28,7 @@ describe("POST /api/auth/logout", () => {
     const response = await POST(request);
 
     expect(response.status).toBe(403);
-
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
     expect(await response.json()).toEqual({
       error: "Forbidden origin",
     });
@@ -78,5 +78,39 @@ describe("POST /api/auth/logout", () => {
     expect(setCookieHeader).toContain("HttpOnly");
     expect(setCookieHeader).toContain("SameSite=lax");
     expect(setCookieHeader).toContain("Path=/");
+  });
+
+  it("returns 500 when session revocation fails", async () => {
+    vi.stubEnv("APP_ORIGIN", "http://localhost:3000");
+
+    vi.mocked(revokeSession).mockRejectedValueOnce(
+      new Error("Database unavailable")
+    );
+
+    const request = new NextRequest(
+      "http://localhost:3000/api/auth/logout",
+      {
+        method: "POST",
+        headers: {
+          Origin: "http://localhost:3000",
+          Cookie: "session=test-session-token",
+        },
+      }
+    );
+
+    const response = await POST(request);
+
+    expect(response.status).toBe(500);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+
+    expect(await response.json()).toEqual({
+      error: "Logout failed",
+    });
+
+    expect(revokeSession).toHaveBeenCalledWith(
+      "test-session-token"
+    );
+
+    expect(response.headers.get("set-cookie")).toBeNull();
   });
 });
