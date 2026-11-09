@@ -7,11 +7,18 @@ import { checkRateLimit } from "@/src/lib/rate-limit/check-rate-limit";
 import { getClientIdentifier } from "@/src/lib/rate-limit/client-identifier";
 import { validateOrigin } from "@/src/lib/security/validate-origin";
 
+const NO_STORE_HEADERS = {
+  "Cache-Control": "no-store",
+};
+
 export async function POST(request: NextRequest) {
   if (!validateOrigin(request)) {
     return NextResponse.json(
       { error: "Forbidden origin" },
-      { status: 403 }
+      {
+        status: 403,
+        headers: NO_STORE_HEADERS,
+      }
     );
   }
 
@@ -22,7 +29,10 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json(
       { error: "Invalid JSON request body" },
-      { status: 400 }
+      {
+        status: 400,
+        headers: NO_STORE_HEADERS,
+      }
     );
   }
 
@@ -34,70 +44,66 @@ export async function POST(request: NextRequest) {
         error: "Invalid registration data",
         details: result.error.flatten(),
       },
-      { status: 400 }
-    );
-  }
-
-try {
-  const clientIdentifier = getClientIdentifier(request);
-
-  const rateLimit = await checkRateLimit(
-    "register",
-    clientIdentifier
-  );
-
-  if (!rateLimit.allowed) {
-    return NextResponse.json(
       {
-        error: "Too many registration attempts. Please try again later.",
-      },
-      {
-        status: 429,
-        headers: {
-          "Retry-After": String(rateLimit.retryAfterSeconds),
-        },
+        status: 400,
+        headers: NO_STORE_HEADERS,
       }
     );
   }
 
-  const passwordHash = await hashPassword(result.data.password);
+  try {
+    const clientIdentifier = getClientIdentifier(request);
 
-  const user = await createUser(result.data.email, passwordHash);
-  return NextResponse.json(
-    {
-      message: "User registered successfully",
-      user,
-    },
-    { status: 201 }
-  );
-} catch (error) {
-  if (isDuplicateEmailError(error)) {
+    const rateLimit = await checkRateLimit(
+      "register",
+      clientIdentifier
+    );
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        {
+          error: "Too many registration attempts. Please try again later.",
+        },
+        {
+          status: 429,
+          headers: {
+            ...NO_STORE_HEADERS,
+            "Retry-After": String(rateLimit.retryAfterSeconds),
+          },
+        }
+      );
+    }
+
+    const passwordHash = await hashPassword(result.data.password);
+
+    const user = await createUser(result.data.email, passwordHash);
     return NextResponse.json(
-      { error: "Email address is already registered" },
-      { status: 409 }
+      {
+        message: "User registered successfully",
+        user,
+      },
+      {
+        status: 201,
+        headers: NO_STORE_HEADERS,
+      }
+    );
+  } catch (error) {
+    if (isDuplicateEmailError(error)) {
+      return NextResponse.json(
+        { error: "Email address is already registered" },
+        {
+          status: 409,
+          headers: NO_STORE_HEADERS,
+        }
+      );
+    }
+
+    return NextResponse.json(
+      { error: "Registration failed" },
+      {
+        status: 500,
+        headers: NO_STORE_HEADERS,
+      }
     );
   }
-
-  return NextResponse.json(
-    { error: "Registration failed" },
-    { status: 500 }
-  );
-}
-
-///return NextResponse.json(
-///  {
-///    message: "Registration data validated and password hashed",
-///    email: result.data.email,
-///    passwordHashed: passwordHash.startsWith("$argon2id$"),
-///  },
-///  { status: 200 }
-///);
-
-//  return NextResponse.json(
-//    {
-//      message: "Registration data is valid",
-//      email: result.data.email,
-//    },
-//    { status: 200 }
-//  );
 }

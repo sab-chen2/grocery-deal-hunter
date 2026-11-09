@@ -52,6 +52,7 @@ describe("POST /api/auth/register", () => {
     const response = await POST(request);
 
     expect(response.status).toBe(429);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
     expect(response.headers.get("Retry-After")).toBe("120");
     expect(await response.json()).toEqual({
       error: "Too many registration attempts. Please try again later.",
@@ -88,6 +89,7 @@ describe("POST /api/auth/register", () => {
     const response = await POST(request);
 
     expect(response.status).toBe(500);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
     expect(await response.json()).toEqual({
       error: "Registration failed",
     });
@@ -130,6 +132,7 @@ describe("POST /api/auth/register", () => {
     const response = await POST(request);
 
     expect(response.status).toBe(201);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
     expect(await response.json()).toEqual({
       message: "User registered successfully",
       user: mockUser,
@@ -167,7 +170,7 @@ describe("POST /api/auth/register", () => {
     const response = await POST(request);
 
     expect(response.status).toBe(403);
-
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
     expect(await response.json()).toEqual({
       error: "Forbidden origin",
     });
@@ -177,5 +180,115 @@ describe("POST /api/auth/register", () => {
     expect(createUser).not.toHaveBeenCalled();
 
     expect(response.headers.get("set-cookie")).toBeNull();
+  });
+
+  it("returns 400 for malformed JSON", async () => {
+    const request = new NextRequest(
+      "http://localhost:3000/api/auth/register",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:3000",
+        },
+        body: '{"email":',
+      }
+    );
+
+    const response = await POST(request);
+
+    expect(response.status).toBe(400);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+
+    expect(await response.json()).toEqual({
+      error: "Invalid JSON request body",
+    });
+
+    expect(checkRateLimit).not.toHaveBeenCalled();
+    expect(hashPassword).not.toHaveBeenCalled();
+    expect(createUser).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 for invalid registration data", async () => {
+    const request = new NextRequest(
+      "http://localhost:3000/api/auth/register",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:3000",
+        },
+        body: JSON.stringify({
+          email: "not-an-email",
+          password: "TestPassword123!",
+        }),
+      }
+    );
+
+    const response = await POST(request);
+
+    expect(response.status).toBe(400);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+
+    const body = await response.json();
+
+    expect(body.error).toBe("Invalid registration data");
+    expect(body.details).toBeDefined();
+
+    expect(checkRateLimit).not.toHaveBeenCalled();
+    expect(hashPassword).not.toHaveBeenCalled();
+    expect(createUser).not.toHaveBeenCalled();
+  });
+
+  it("returns 409 when the email address is already registered", async () => {
+    vi.mocked(checkRateLimit).mockResolvedValueOnce({
+      allowed: true,
+      remaining: 4,
+      retryAfterSeconds: 0,
+    });
+
+    vi.mocked(hashPassword).mockResolvedValueOnce("hashed-password");
+
+    vi.mocked(createUser).mockRejectedValueOnce({
+      kind: "sql_query",
+      sqlState: "23505",
+      constraint: "User_email_key",
+    });
+
+    const request = new NextRequest(
+      "http://localhost:3000/api/auth/register",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:3000",
+        },
+        body: JSON.stringify({
+          email: "test@example.com",
+          password: "TestPassword123!",
+        }),
+      }
+    );
+
+    const response = await POST(request);
+
+    expect(response.status).toBe(409);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+
+    expect(await response.json()).toEqual({
+      error: "Email address is already registered",
+    });
+
+    expect(checkRateLimit).toHaveBeenCalledWith(
+      "register",
+      "test-client"
+    );
+
+    expect(hashPassword).toHaveBeenCalledWith("TestPassword123!");
+
+    expect(createUser).toHaveBeenCalledWith(
+      "test@example.com",
+      "hashed-password"
+    );
   });
 });
