@@ -1,14 +1,12 @@
 export const runtime = 'nodejs';
-import { currentOffers, distanceMeters } from '@/src/demo-pricing';
+import { currentOffers } from '@/src/demo-pricing';
 import { matchesStore } from '@/src/demo-store';
 
 export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
   const query = (params.get('q') || '').trim();
   const zip = params.get('zip');
-  const lat = Number(params.get('lat')); const lng = Number(params.get('lng')); const radius = Number(params.get('radius') || '4828');
-  const nearby = params.has('lat') || params.has('lng');
-  if (query.length > 100 || (zip && !/^\d{5}$/.test(zip)) || (nearby && (!params.has('lat') || !params.has('lng') || !Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180 || ![1609, 4828, 8047].includes(radius)))) {
+  if (query.length > 100 || (zip && !/^\d{5}$/.test(zip))) {
     return Response.json({ error: 'Provide a valid search, ZIP code, and supported radius.' }, { status: 400 });
   }
   try {
@@ -29,7 +27,7 @@ export async function GET(request: Request) {
       latitude: location.latitude!, longitude: location.longitude!, zipCode: location.zipCode,
       source: 'demo' as const,
       products: currentOffers(location.storeLocationId, products, numericPrices, numericDeals),
-    })).filter((store) => matchesStore(store, query) && (nearby ? distanceMeters(lat, lng, store.latitude, store.longitude) <= radius : !zip || store.zipCode === zip))
+    })).filter((store) => matchesStore(store, query) && (!zip || store.zipCode === zip))
       .sort((a, b) => a.name.localeCompare(b.name));
     return Response.json({ stores: result }, { headers: { 'Cache-Control': 'no-store' } });
   } catch {

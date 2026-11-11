@@ -22,9 +22,4 @@ export function currentOffers(locationId: number, products: ProductRow[], prices
       onSale: effective < regular, validUntil: price.validUntil, coupon: coupons[0] || null }];
   });
 }
-
-export function distanceMeters(lat1: number, lng1: number, lat2: number, lng2: number) {
-  const radians = (value: number) => value * Math.PI / 180;
-  const a = Math.sin(radians(lat2 - lat1) / 2) ** 2 + Math.cos(radians(lat1)) * Math.cos(radians(lat2)) * Math.sin(radians(lng2 - lng1) / 2) ** 2;
-  return 6371000 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(Math.max(0, 1 - a)));
-}
+

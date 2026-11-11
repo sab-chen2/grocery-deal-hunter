@@ -1,0 +1,1 @@
+export default function Page(){return <main><h1>Log in</h1><p>Account services are not connected yet. You can continue shopping as a guest; your current list stays in this browser.</p><a href="/">Continue as guest</a></main>}

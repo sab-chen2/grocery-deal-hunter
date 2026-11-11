@@ -5,11 +5,7 @@ export type ProductOffer = {
 };
 export type DemoStore = { id: number; name: string; address: string; latitude: number; longitude: number; zipCode?: string; products?: ProductOffer[] };
 
-export type GroceryStore = Omit<DemoStore, 'id'> & {
-  id: string | number;
-  source: 'demo' | 'google';
-  googleMapsURI?: string;
-};
+export type GroceryStore = DemoStore & { source: 'demo' };
 
 export function matchingProducts(store: GroceryStore, query: string) {
   const words = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
