@@ -17,8 +17,8 @@ export default function ShoppingListPanel({ onClose }: { onClose?: () => void })
     } catch (failure) { setError(failure instanceof Error ? failure.message : 'Unable to add item.'); }
   }
   return <section className="shopping-panel" aria-labelledby="shopping-panel-title">
-    <div className="shopping-panel-heading"><div><p className="eyebrow">PLAN YOUR NEXT TRIP</p><h2 id="shopping-panel-title">My shopping list</h2></div>{onClose && <button type="button" className="shopping-close" onClick={onClose} aria-label="Close shopping list">×</button>}</div>
-    <p className="shopping-description">Add anything you need, with or without a discount.</p>
+    <div className="shopping-panel-heading"><div><p className="eyebrow">A LITTLE PLAN FOR THE WEEK</p><h2 id="shopping-panel-title">Your shopping list</h2></div>{onClose && <button type="button" className="shopping-close" onClick={onClose} aria-label="Close shopping list">×</button>}</div>
+    <p className="shopping-description">The essentials, the treats, the “nearly forgot.”</p>
     <form className="shopping-add-form" onSubmit={submit}>
       <label htmlFor="shopping-item-name">Grocery item</label><input id="shopping-item-name" value={name} onChange={(event) => setName(event.target.value)} placeholder="e.g. eggs, apples, coffee" maxLength={100} required />
       <div className="shopping-add-actions"><label htmlFor="shopping-item-quantity">Quantity<input id="shopping-item-quantity" type="number" min={1} max={999} step={1} value={quantity} onChange={(event) => setQuantityInput(event.target.value)} required /></label><button type="submit">Add item</button></div>
@@ -26,7 +26,7 @@ export default function ShoppingListPanel({ onClose }: { onClose?: () => void })
     {error && <p className="shopping-error" role="alert">{error}</p>}
     <p className="shopping-summary">{items.length} {items.length === 1 ? 'item' : 'items'} · {count} total units</p>
     <p className="sr-only" role="status">{announcement}</p>
-    {!items.length ? <div className="shopping-empty"><strong>Your list starts here.</strong><p>Add an item above or use “Add to list” on a store product.</p></div> : <ul className="shopping-items">{items.map((item) => <li key={item.id}>
+    {!items.length ? <div className="shopping-empty"><strong>Room for something good.</strong><p>Add an item above or choose a product from the shop.</p></div> : <ul className="shopping-items">{items.map((item) => <li key={item.id}>
       <div className="shopping-item-name"><strong>{item.name}</strong>{item.size && <span>{item.size}</span>}<button className="shopping-remove" onClick={() => { removeItem(item.id); setAnnouncement(`${item.name} removed.`); }} aria-label={`Remove ${item.name}`}>Remove</button></div>
       <div className="quantity-control"><button type="button" disabled={item.quantity <= 1} onClick={() => setQuantity(item.id, item.quantity - 1)} aria-label={`Decrease quantity of ${item.name}`}>−</button><input key={`${item.id}:${item.quantity}`} aria-label={`Quantity of ${item.name}`} type="number" min={1} max={999} step={1} defaultValue={item.quantity} onBlur={(event) => {
         const value = Number(event.target.value);
