@@ -1,0 +1,48 @@
+{
+  "storeId": "store-002",
+  "storeName": "Value Pantry",
+  "products": [
+    {
+      "productId": "chicken-breast",
+      "productName": "Boneless Chicken Breast",
+      "brand": "Value Pantry",
+      "price": 3.29,
+      "unit": "lb"
+    },
+    {
+      "productId": "sandwich-bread",
+      "productName": "Sliced Sandwich Bread",
+      "brand": "Value Pantry",
+      "price": 1.99,
+      "unit": "loaf"
+    },
+    {
+      "productId": "large-eggs",
+      "productName": "Large Eggs",
+      "brand": "Value Pantry",
+      "price": 2.99,
+      "unit": "dozen"
+    },
+    {
+      "productId": "strawberries",
+      "productName": "Strawberries",
+      "brand": "Meadow Patch Farms",
+      "price": 3.79,
+      "unit": "pint"
+    },
+    {
+      "productId": "iceberg-lettuce",
+      "productName": "Iceberg Lettuce",
+      "brand": null,
+      "price": 1.89,
+      "unit": "head"
+    },
+    {
+      "productId": "large-onion",
+      "productName": "Large Onion",
+      "brand": null,
+      "price": 0.79,
+      "unit": "each"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+    "storeId": "store-001",
+    "storeName": "KeyFood",
+    "products": [
+    {
+    "productId": "chicken-breast",
+    "productName": "Boneless Chicken Breast",
+    "brand": "Store Brand",
+    "price": 3.50,
+    "unit": "lb"
+    },
+    {
+    "productId": "sandwich-bread",
+    "productName": "Sliced Sandwich Bread",
+    "brand": "Store Brand",
+    "price": 2.99,
+    "unit": "loaf"
+    },
+    {
+    "productId": "large-eggs",
+    "productName": "Large Eggs",
+    "brand": "Store Brand",
+    "price": 3.99,
+    "unit": "dozen"
+    },
+    {
+    "productId": "strawberries",
+    "productName": "Strawberries",
+    "brand": "Fresh Farms",
+    "price": 3.39,
+    "unit": "pint"
+    },
+    {
+    "productId": "iceberg-lettuce",
+    "productName": "Iceberg Lettuce",
+    "brand": null,
+    "price": 1.69,
+    "unit": "head"
+    },
+    {
+    "productId": "large-onion",
+    "productName": "Large Onion",
+    "brand": null,
+    "price": 1.39,
+    "unit": "each"
+    }
+    ]
+}

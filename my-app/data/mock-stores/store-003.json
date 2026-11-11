@@ -1,0 +1,48 @@
+{
+  "storeId": "store-003",
+  "storeName": "ShopRite",
+  "products": [
+    {
+      "productId": "chicken-breast",
+      "productName": "Boneless Chicken Breast",
+      "brand": null,
+      "price": 4.99,
+      "unit": "lb"
+    },
+    {
+      "productId": "sandwich-bread",
+      "productName": "Sliced Sandwich Bread",
+      "brand": null,
+      "price": 2.49,
+      "unit": "loaf"
+    },
+    {
+      "productId": "large-eggs",
+      "productName": "Large Eggs",
+      "brand": null,
+      "price": 3.79,
+      "unit": "dozen"
+    },
+    {
+      "productId": "strawberries",
+      "productName": "Strawberries",
+      "brand": null,
+      "price": 3.99,
+      "unit": "pint"
+    },
+    {
+      "productId": "iceberg-lettuce",
+      "productName": "Iceberg Lettuce",
+      "brand": null,
+      "price": 1.99,
+      "unit": "head"
+    },
+    {
+      "productId": "large-onion",
+      "productName": "Large Onion",
+      "brand": null,
+      "price": 1.29,
+      "unit": "each"
+    }
+  ]
+}

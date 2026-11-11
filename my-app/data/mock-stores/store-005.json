@@ -1,0 +1,48 @@
+{
+  "storeId": "store-005",
+  "storeName": "Riverside Grocers",
+  "products": [
+    {
+      "productId": "chicken-breast",
+      "productName": "Boneless Chicken Breast",
+      "brand": "Riverside Grocers",
+      "price": 2.99,
+      "unit": "lb"
+    },
+    {
+      "productId": "sandwich-bread",
+      "productName": "Sliced Sandwich Bread",
+      "brand": "Riverside Grocers",
+      "price": 2.29,
+      "unit": "loaf"
+    },
+    {
+      "productId": "large-eggs",
+      "productName": "Large Eggs",
+      "brand": "Riverside Grocers",
+      "price": 3.19,
+      "unit": "dozen"
+    },
+    {
+      "productId": "strawberries",
+      "productName": "Strawberries",
+      "brand": "Meadow Patch Farms",
+      "price": 3.29,
+      "unit": "pint"
+    },
+    {
+      "productId": "iceberg-lettuce",
+      "productName": "Iceberg Lettuce",
+      "brand": null,
+      "price": 1.69,
+      "unit": "head"
+    },
+    {
+      "productId": "large-onion",
+      "productName": "Large Onion",
+      "brand": null,
+      "price": 0.95,
+      "unit": "each"
+    }
+  ]
+}
