@@ -1,3 +1,4 @@
+import mockData from '../src/mock-data.json' with { type: 'json' };
 import 'dotenv/config';
 import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
@@ -11,32 +12,7 @@ const windowsPsql = 'C:/Program Files/PostgreSQL/18/bin/psql.exe';
 const psql = process.env.PSQL_PATH || (existsSync(windowsPsql) ? windowsPsql : 'psql');
 const quote = (value) => value == null ? 'NULL' : `'${String(value).replaceAll("'", "''")}'`;
 const source = 'fictional-demo-v1';
-const stores = [
-  ['Demo Fresh Basket', '10 Demo Market Lane', 40.694, -73.986],
-  ['Demo Budget Pantry', '20 Demo Grocery Avenue', 40.691, -73.991],
-  ['Demo Neighborhood Foods', '30 Demo Produce Street', 40.698, -73.982],
-];
-// All prices are USD per package; sizes are shared across stores for fair comparisons.
-const products = [
-  ['Whole Milk', 'Dairy', '1', 'gallon', [4.49, 4.19, 4.79]],
-  ['Large Eggs', 'Dairy', '12', 'count', [3.99, 3.49, 4.29]],
-  ['Whole Wheat Bread', 'Bakery', '20', 'oz', [3.29, 2.99, 3.59]],
-  ['Bananas', 'Produce', '1', 'lb', [0.69, 0.59, 0.79]],
-  ['Gala Apples', 'Produce', '3', 'lb', [4.99, 4.49, 5.29]],
-  ['Chicken Breast', 'Meat', '1', 'lb', [4.99, 5.49, 5.29]],
-  ['White Rice', 'Pantry', '2', 'lb', [2.99, 2.49, 3.29]],
-  ['Spaghetti', 'Pantry', '16', 'oz', [1.79, 1.49, 1.99]],
-  ['Tomato Pasta Sauce', 'Pantry', '24', 'oz', [2.79, 2.49, 2.99]],
-  ['Cheddar Cheese', 'Dairy', '8', 'oz', [2.99, 2.79, 3.49]],
-  ['Plain Greek Yogurt', 'Dairy', '32', 'oz', [5.49, 4.99, 5.79]],
-  ['Frozen Broccoli', 'Frozen', '12', 'oz', [1.99, 1.79, 2.29]],
-  ['Rolled Oats', 'Pantry', '18', 'oz', [3.49, 2.99, 3.79]],
-  ['Peanut Butter', 'Pantry', '16', 'oz', [2.99, 2.69, 3.29]],
-  ['Orange Juice', 'Beverages', '52', 'fl oz', [3.99, 3.79, 4.49]],
-];
-// store index, product index, discount dollars, coupon required
-const deals = [[0, 5, 1, false], [0, 9, 0.5, false], [1, 0, 0.5, false],
-  [1, 6, 0.5, false], [2, 1, 1.5, false], [2, 10, 1, true]];
+const { stores, products, deals } = mockData;
 const id = (index) => -91000 - index;
 const statements = ['BEGIN;', "SELECT pg_advisory_xact_lock(910001);"];
 
@@ -57,33 +33,33 @@ statements.push(`DO $$ BEGIN
   END IF;
 END $$;`);
 
-stores.forEach(([name, address, lat, lng], i) => {
+stores.forEach(({ id: storeId, name, address, latitude: lat, longitude: lng }) => {
   statements.push(`INSERT INTO "Store" ("storeId", "name", "websiteUrl")
-    VALUES (${id(i)}, ${quote(name)}, 'https://grocery-demo.example')
+    VALUES (${storeId}, ${quote(name)}, 'https://grocery-demo.example')
     ON CONFLICT ("storeId") DO UPDATE SET "name" = EXCLUDED."name";`);
   statements.push(`INSERT INTO "StoreLocation" ("storeLocationId", "storeId", "addressLine1", "addressLine2", "city", "state", "zipCode", "country", "latitude", "longitude")
-    VALUES (${id(i)}, ${id(i)}, ${quote(address)}, 'FICTIONAL DEMO LOCATION', 'Brooklyn', 'NY', '11201', 'US', ${lat}, ${lng})
+    VALUES (${storeId}, ${storeId}, ${quote(address)}, 'FICTIONAL DEMO LOCATION', 'Brooklyn', 'NY', '11201', 'US', ${lat}, ${lng})
     ON CONFLICT ("storeLocationId") DO UPDATE SET "addressLine1" = EXCLUDED."addressLine1";`);
 });
-products.forEach(([name, category, size, unit, prices], p) => {
+products.forEach(({ productId, name, category, size, unit, prices }, p) => {
   statements.push(`INSERT INTO "Product" ("productId", "brand", "name", "category", "size", "unit", "updatedAt")
-    VALUES (${id(p)}, 'Demo Pantry', ${quote(name)}, ${quote(category)}, ${quote(size)}, ${quote(unit)}, now())
+    VALUES (${productId}, 'Demo Pantry', ${quote(name)}, ${quote(category)}, ${quote(size)}, ${quote(unit)}, now())
     ON CONFLICT ("productId") DO UPDATE SET "name" = EXCLUDED."name", "category" = EXCLUDED."category",
     "size" = EXCLUDED."size", "unit" = EXCLUDED."unit", "updatedAt" = now();`);
   prices.forEach((regular, s) => {
-    const deal = deals.find(([store, product]) => store === s && product === p);
+    const deal = deals.find(deal => deal.storeLocationId === stores[s].id && deal.productId === productId);
     // Coupons stay conditional in Deal; do not advertise them as unconditional sale prices.
-    const sale = deal && !deal[3] ? (regular - deal[2]).toFixed(2) : null;
+    const sale = deal && !deal.couponRequired ? (regular - deal.discountAmount).toFixed(2) : null;
     const effective = sale ?? regular;
     statements.push(`INSERT INTO "Price" ("priceId", "productId", "storeLocationId", "regularPrice", "salePrice", "unitPrice", "observedAt", "validFrom", "validUntil", "source")
-      VALUES (${id(p * 3 + s)}, ${id(p)}, ${id(s)}, ${regular}, ${sale ?? 'NULL'}, ${Number(effective) / Number(size)}, now(), now() - interval '1 day', now() + interval '7 days', '${source}')
+      VALUES (${id(p * 3 + s)}, ${productId}, ${stores[s].id}, ${regular}, ${sale ?? 'NULL'}, ${Number(effective) / Number(size)}, now(), now() - interval '1 day', now() + interval '7 days', '${source}')
       ON CONFLICT ("priceId") DO UPDATE SET "regularPrice" = EXCLUDED."regularPrice", "salePrice" = EXCLUDED."salePrice",
       "unitPrice" = EXCLUDED."unitPrice", "observedAt" = EXCLUDED."observedAt", "validFrom" = EXCLUDED."validFrom", "validUntil" = EXCLUDED."validUntil";`);
   });
 });
-deals.forEach(([s, p, discount, coupon], i) => {
+deals.forEach(({ storeLocationId, productId, discountAmount: discount, couponRequired: coupon, couponCode }, i) => {
   statements.push(`INSERT INTO "Deal" ("dealId", "productId", "storeLocationId", "dealType", "discountAmount", "couponRequired", "couponCode", "validFrom", "validUntil", "source")
-    VALUES (${id(i)}, ${id(p)}, ${id(s)}, ${quote(coupon ? 'coupon' : 'sale')}, ${discount}, ${coupon}, ${quote(coupon ? 'DEMOYOGURT' : null)}, now() - interval '1 day', now() + interval '7 days', '${source}')
+    VALUES (${id(i)}, ${productId}, ${storeLocationId}, ${quote(coupon ? 'coupon' : 'sale')}, ${discount}, ${coupon}, ${quote(couponCode)}, now() - interval '1 day', now() + interval '7 days', '${source}')
     ON CONFLICT ("dealId") DO UPDATE SET "discountAmount" = EXCLUDED."discountAmount", "couponRequired" = EXCLUDED."couponRequired",
     "couponCode" = EXCLUDED."couponCode", "validFrom" = EXCLUDED."validFrom", "validUntil" = EXCLUDED."validUntil";`);
 });

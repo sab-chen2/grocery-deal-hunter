@@ -1,0 +1,269 @@
+{
+  "stores": [
+    {
+      "id": -91000,
+      "name": "Demo Fresh Basket",
+      "address": "10 Demo Market Lane",
+      "latitude": 40.694,
+      "longitude": -73.986,
+      "zipCode": "11201"
+    },
+    {
+      "id": -91001,
+      "name": "Demo Budget Pantry",
+      "address": "20 Demo Grocery Avenue",
+      "latitude": 40.691,
+      "longitude": -73.991,
+      "zipCode": "11201"
+    },
+    {
+      "id": -91002,
+      "name": "Demo Neighborhood Foods",
+      "address": "30 Demo Produce Street",
+      "latitude": 40.698,
+      "longitude": -73.982,
+      "zipCode": "11201"
+    }
+  ],
+  "products": [
+    {
+      "productId": -91000,
+      "name": "Whole Milk",
+      "brand": "Demo Pantry",
+      "category": "Dairy",
+      "size": "1",
+      "unit": "gallon",
+      "prices": [
+        4.49,
+        4.19,
+        4.79
+      ]
+    },
+    {
+      "productId": -91001,
+      "name": "Large Eggs",
+      "brand": "Demo Pantry",
+      "category": "Dairy",
+      "size": "12",
+      "unit": "count",
+      "prices": [
+        3.99,
+        3.49,
+        4.29
+      ]
+    },
+    {
+      "productId": -91002,
+      "name": "Whole Wheat Bread",
+      "brand": "Demo Pantry",
+      "category": "Bakery",
+      "size": "20",
+      "unit": "oz",
+      "prices": [
+        3.29,
+        2.99,
+        3.59
+      ]
+    },
+    {
+      "productId": -91003,
+      "name": "Bananas",
+      "brand": "Demo Pantry",
+      "category": "Produce",
+      "size": "1",
+      "unit": "lb",
+      "prices": [
+        0.69,
+        0.59,
+        0.79
+      ]
+    },
+    {
+      "productId": -91004,
+      "name": "Gala Apples",
+      "brand": "Demo Pantry",
+      "category": "Produce",
+      "size": "3",
+      "unit": "lb",
+      "prices": [
+        4.99,
+        4.49,
+        5.29
+      ]
+    },
+    {
+      "productId": -91005,
+      "name": "Chicken Breast",
+      "brand": "Demo Pantry",
+      "category": "Meat",
+      "size": "1",
+      "unit": "lb",
+      "prices": [
+        4.99,
+        5.49,
+        5.29
+      ]
+    },
+    {
+      "productId": -91006,
+      "name": "White Rice",
+      "brand": "Demo Pantry",
+      "category": "Pantry",
+      "size": "2",
+      "unit": "lb",
+      "prices": [
+        2.99,
+        2.49,
+        3.29
+      ]
+    },
+    {
+      "productId": -91007,
+      "name": "Spaghetti",
+      "brand": "Demo Pantry",
+      "category": "Pantry",
+      "size": "16",
+      "unit": "oz",
+      "prices": [
+        1.79,
+        1.49,
+        1.99
+      ]
+    },
+    {
+      "productId": -91008,
+      "name": "Tomato Pasta Sauce",
+      "brand": "Demo Pantry",
+      "category": "Pantry",
+      "size": "24",
+      "unit": "oz",
+      "prices": [
+        2.79,
+        2.49,
+        2.99
+      ]
+    },
+    {
+      "productId": -91009,
+      "name": "Cheddar Cheese",
+      "brand": "Demo Pantry",
+      "category": "Dairy",
+      "size": "8",
+      "unit": "oz",
+      "prices": [
+        2.99,
+        2.79,
+        3.49
+      ]
+    },
+    {
+      "productId": -91010,
+      "name": "Plain Greek Yogurt",
+      "brand": "Demo Pantry",
+      "category": "Dairy",
+      "size": "32",
+      "unit": "oz",
+      "prices": [
+        5.49,
+        4.99,
+        5.79
+      ]
+    },
+    {
+      "productId": -91011,
+      "name": "Frozen Broccoli",
+      "brand": "Demo Pantry",
+      "category": "Frozen",
+      "size": "12",
+      "unit": "oz",
+      "prices": [
+        1.99,
+        1.79,
+        2.29
+      ]
+    },
+    {
+      "productId": -91012,
+      "name": "Rolled Oats",
+      "brand": "Demo Pantry",
+      "category": "Pantry",
+      "size": "18",
+      "unit": "oz",
+      "prices": [
+        3.49,
+        2.99,
+        3.79
+      ]
+    },
+    {
+      "productId": -91013,
+      "name": "Peanut Butter",
+      "brand": "Demo Pantry",
+      "category": "Pantry",
+      "size": "16",
+      "unit": "oz",
+      "prices": [
+        2.99,
+        2.69,
+        3.29
+      ]
+    },
+    {
+      "productId": -91014,
+      "name": "Orange Juice",
+      "brand": "Demo Pantry",
+      "category": "Beverages",
+      "size": "52",
+      "unit": "fl oz",
+      "prices": [
+        3.99,
+        3.79,
+        4.49
+      ]
+    }
+  ],
+  "deals": [
+    {
+      "storeLocationId": -91000,
+      "productId": -91005,
+      "discountAmount": 1,
+      "couponRequired": false,
+      "couponCode": null
+    },
+    {
+      "storeLocationId": -91000,
+      "productId": -91009,
+      "discountAmount": 0.5,
+      "couponRequired": false,
+      "couponCode": null
+    },
+    {
+      "storeLocationId": -91001,
+      "productId": -91000,
+      "discountAmount": 0.5,
+      "couponRequired": false,
+      "couponCode": null
+    },
+    {
+      "storeLocationId": -91001,
+      "productId": -91006,
+      "discountAmount": 0.5,
+      "couponRequired": false,
+      "couponCode": null
+    },
+    {
+      "storeLocationId": -91002,
+      "productId": -91001,
+      "discountAmount": 1.5,
+      "couponRequired": false,
+      "couponCode": null
+    },
+    {
+      "storeLocationId": -91002,
+      "productId": -91010,
+      "discountAmount": 1,
+      "couponRequired": true,
+      "couponCode": "DEMOYOGURT"
+    }
+  ]
+}

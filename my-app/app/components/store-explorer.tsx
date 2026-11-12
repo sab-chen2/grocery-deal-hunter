@@ -42,7 +42,7 @@ export default function StoreExplorer({ comparison = false, initialZip = '11201'
   const products = Array.from(new Map(stores.flatMap(store => store.products || []).map(product => [product.productId, product])).values());
   const visibleProducts = products.filter(product => `${product.name} ${product.category} ${product.size}`.toLowerCase().includes(query.toLowerCase().trim()));
   const unmatched = items.filter(item => item.productId === undefined);
-  const { baskets, bestOffers } = compareOffers(stores, items, coupons);
+  const { baskets, bestOffers, splitTotal, savings, missingItems } = compareOffers(stores, items, coupons);
   const searchHref = `/?zip=${encodeURIComponent(initialZip)}`;
   const readyToCompare = items.length > 0 && unmatched.length === 0 && status === 'ready';
 
@@ -120,11 +120,14 @@ export default function StoreExplorer({ comparison = false, initialZip = '11201'
           <label className="coupon-toggle"><input type="checkbox" checked={coupons} onChange={event => setCoupons(event.target.checked)} /> Include prices that need a coupon</label>
           {status === 'ready' && (!items.length || unmatched.length > 0 ? <div className="empty-state"><h3>{items.length ? 'Let’s finish your list first.' : 'A great shop starts with a list.'}</h3><p>{items.length ? 'Choose an exact product and size for each item before comparing.' : 'Add a few essentials to find your best basket.'}</p><Link className="button" href={searchHref}>Build my list →</Link></div> : weekly ? <>
             <p className="section-description">These prices may mean visiting more than one store. Quantities are included in each total.</p>
-            {bestOffers.map(({ item, best }) => <article className="weekly-row" key={item.id}><div><h3>{item.name}</h3><p>{item.quantity} × {item.size}</p>{best && <p>{best.store.name}</p>}{coupons && best?.offer.coupon && <small className="coupon-note">Coupon required{best.offer.coupon.code ? `: ${best.offer.coupon.code}` : ''}</small>}</div><strong className="line-total">{best ? dollars(best.cents / 100) : 'Unavailable'}</strong></article>)}
+            <div className="basket-card"><div className="basket-total"><h3>Split shopping total</h3><strong>{splitTotal === null ? 'Incomplete list' : dollars(splitTotal / 100)}</strong></div>
+              {splitTotal === null ? <p>{missingItems.length} items have no available price. A complete total cannot be calculated.</p> : savings !== null && <p>Save {dollars(savings / 100)} compared with the cheapest complete one-store basket.</p>}
+            </div>
+            {bestOffers.map(({ item, best }) => <article className="weekly-row" key={item.id}><div><h3>{item.name}</h3><p>{item.quantity} × {item.size}</p>{best && <p>{best.store.name}</p>}{best?.couponApplied && best.offer.coupon && <small className="coupon-note">Coupon required{best.offer.coupon.code ? `: ${best.offer.coupon.code}` : ''}</small>}</div><strong className="line-total">{best ? dollars(best.cents / 100) : 'Unavailable'}</strong></article>)}
           </> : baskets.length ? baskets.slice(0, 3).map((basket, index) => <article className={`basket-card ${index === 0 ? 'best-basket' : ''}`} key={basket.store.id}>
             <div className="basket-heading"><span className="eyebrow">{index === 0 ? 'YOUR LOWEST COMPLETE BASKET' : 'ANOTHER GOOD OPTION'}</span><span>{items.length} / {items.length} listed items</span></div>
             <div className="basket-total"><div><h3>{basket.store.name}</h3><p>{basket.store.address}</p></div><div><strong>{dollars(basket.total / 100)}</strong><small>estimated total</small></div></div>
-            <details open={index === 0}><summary>What’s in this basket</summary><ul>{basket.lines.map(line => <li key={line.item.id}><span>{line.item.quantity} × {line.item.name}<small>{line.item.size}{coupons && line.offer.coupon ? ` · Coupon required${line.offer.coupon.code ? `: ${line.offer.coupon.code}` : ''}` : ''}</small></span><strong>{dollars(line.cents / 100)}</strong></li>)}</ul></details>
+            <details open={index === 0}><summary>What’s in this basket</summary><ul>{basket.lines.map(line => <li key={line.item.id}><span>{line.item.quantity} × {line.item.name}<small>{line.item.size}{line.couponApplied && line.offer.coupon ? ` · Coupon required${line.offer.coupon.code ? `: ${line.offer.coupon.code}` : ''}` : ''}</small></span><strong>{dollars(line.cents / 100)}</strong></li>)}</ul></details>
           </article>) : <div className="empty-state"><h3>No single store has every listed item.</h3><p>Try “Split & save” for individual offers, or adjust your list or ZIP.</p><Link className="text-link" href={searchHref}>Edit my search →</Link></div>)}
           <p className="fine-print">Fictional demo prices. Estimates exclude tax and travel. A price listing does not guarantee stock.</p>
         </>}
