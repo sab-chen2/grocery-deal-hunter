@@ -40,6 +40,10 @@
       "model": "ProductMatch",
       "namespace": "public"
     },
+    "RateLimit": {
+      "model": "RateLimit",
+      "namespace": "public"
+    },
     "Session": {
       "model": "Session",
       "namespace": "public"
@@ -1022,6 +1026,77 @@
               "table": "ProductMatch"
             }
           },
+          "RateLimit": {
+            "fields": {
+              "attempts": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "expiresAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "keyHash": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "policy": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "rateLimitId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "windowStart": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "attempts": {
+                  "column": "attempts"
+                },
+                "expiresAt": {
+                  "column": "expiresAt"
+                },
+                "keyHash": {
+                  "column": "keyHash"
+                },
+                "policy": {
+                  "column": "policy"
+                },
+                "rateLimitId": {
+                  "column": "rateLimitId"
+                },
+                "windowStart": {
+                  "column": "windowStart"
+                }
+              },
+              "namespaceId": "public",
+              "table": "RateLimit"
+            }
+          },
           "Session": {
             "fields": {
               "createdAt": {
@@ -1049,6 +1124,13 @@
                 "nullable": false,
                 "type": {
                   "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "tokenHash": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
@@ -1107,6 +1189,9 @@
                 },
                 "sessionId": {
                   "column": "sessionId"
+                },
+                "tokenHash": {
+                  "column": "tokenHash"
                 },
                 "userId": {
                   "column": "userId"
@@ -1382,6 +1467,13 @@
                   "kind": "scalar"
                 }
               },
+              "passwordHash": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "supabaseAuthId": {
                 "nullable": true,
                 "type": {
@@ -1503,6 +1595,9 @@
                 },
                 "email": {
                   "column": "email"
+                },
+                "passwordHash": {
+                  "column": "passwordHash"
                 },
                 "supabaseAuthId": {
                   "column": "supabaseAuthId"
@@ -2472,6 +2567,63 @@
               },
               "uniques": []
             },
+            "RateLimit": {
+              "columns": {
+                "attempts": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 0
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "expiresAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "keyHash": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "policy": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "rateLimitId": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "windowStart": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "rateLimitId"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "keyHash",
+                    "policy"
+                  ]
+                }
+              ]
+            },
             "Session": {
               "columns": {
                 "createdAt": {
@@ -2501,6 +2653,11 @@
                   },
                   "nativeType": "int4",
                   "nullable": false
+                },
+                "tokenHash": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 },
                 "userId": {
                   "codecId": "pg/int4@1",
@@ -2565,7 +2722,13 @@
                   "sessionId"
                 ]
               },
-              "uniques": []
+              "uniques": [
+                {
+                  "columns": [
+                    "tokenHash"
+                  ]
+                }
+              ]
             },
             "Store": {
               "columns": {
@@ -2723,6 +2886,11 @@
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
+                },
+                "passwordHash": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 },
                 "supabaseAuthId": {
                   "codecId": "pg/text@1",
@@ -2885,7 +3053,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "d55f76b5f9da3301a10691ec67cc3289d3e6e7dbac282e5fcd7896bd9570df8c"
+    "storageHash": "4fe9b8548d073314a03ce7fbd18e2a9fd788764e5b5c0f2baf864764b6d1bfd6"
   },
   "execution": {
     "executionHash": "4ee268f5c0e958160548c28a6033a1d573d1bc5700d040b00931ca418f9a377d",
