@@ -152,6 +152,34 @@ details li small { display: block; color: var(--muted); font-size: 10px; }
 .account-page { max-width: 740px; padding-top: 75px; padding-bottom: 100px; }
 .account-page h1 { font-size: 56px; margin: 20px 0; }
 .account-page > p:not(.eyebrow) { color: var(--muted); margin: 20px 0 28px; max-width: 480px; }
+.auth-page { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 460px); align-items: center; gap: 64px; padding-top: 60px; padding-bottom: 70px; }
+.auth-heading h1 { margin: 24px 0; }
+.auth-heading > p:not(.eyebrow) { max-width: 370px; color: var(--muted); }
+.auth-heading .auth-caption { margin-top: 40px; font: italic 23px Georgia, serif; }
+.auth-card { background: #fffefa; border: 1px solid var(--line); border-radius: 8px; padding: 32px; }
+.auth-card h2 { font-size: 29px; }
+.auth-intro { margin: 14px 0 24px; color: var(--muted); font-size: 12px; }
+.auth-form { display: grid; gap: 20px; }
+.auth-field { display: grid; gap: 7px; }
+.auth-field label { font-size: 13px; font-weight: 600; }
+.auth-field input { width: 100%; min-width: 0; font-size: 16px; }
+.auth-password { position: relative; }
+.auth-password input { padding-right: 72px; }
+.auth-show { position: absolute; right: 3px; top: 3px; bottom: 3px; min-height: 38px; padding: 4px 12px; color: var(--ink); background: transparent; font-size: 12px; }
+.auth-show:hover { color: var(--ink); background: #eeefe3; }
+.auth-help { color: var(--muted); font-size: 12px; }
+.auth-submit { width: 100%; justify-content: space-between; }
+.auth-feedback { padding: 12px; border: 1px solid var(--line); border-radius: 4px; font-size: 13px; margin: 0; }
+.auth-switch { text-align: center; font-size: 13px; margin-top: 22px; }
+.auth-switch a, .auth-guest a { font-weight: 600; }
+.auth-guest { border-top: 1px solid var(--line); padding-top: 22px; margin-top: 24px; text-align: center; font-size: 13px; }
+.auth-guest p { color: var(--muted); font-size: 11px; margin-top: 8px; }
+@media (max-width: 760px) {
+  .auth-page { grid-template-columns: minmax(0, 1fr); gap: 28px; max-width: 540px; padding-top: 32px; padding-bottom: 40px; }
+  .auth-heading h1 { font-size: 48px; margin: 18px 0; }
+  .auth-heading .auth-caption { display: none; }
+  .auth-card { padding: 24px; }
+}
 @media (max-width: 900px) {
   main { padding: 0 24px; }
   .site-nav { padding: 20px 24px; }
